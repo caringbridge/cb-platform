@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+MAILTO=wandersen@caringbridge.org
+
+# EVERY 5 MINUTES - Update Sphinx Deltas (smaller index for search)
+*/5 * * * * env APPLICATION_ENV=vagrant /opt/platform/scripts/cb search heartbeat 1>/dev/null
+# 9:00PM - Update Sphinx Complete Index
+0  21 * * * env APPLICATION_ENV=vagrant /opt/platform/scripts/cb search reindex 1>/dev/null

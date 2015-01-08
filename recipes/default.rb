@@ -1,0 +1,184 @@
+#
+# Cookbook Name:: cb-platform
+# Recipe:: default
+#
+# Copyright (C) 2014 YOUR_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+#
+# Cookbook Name:: platform
+# Recipe:: default
+#
+# Copyright (c) 2014, CaringBridge, a nonprofit organization
+#
+# All rights reserved - Do Not Redistribute
+
+include_recipe "yum"
+include_recipe "yum-epel"
+include_recipe "python"
+# include_recipe "role-zendserver"
+# include_recipe "role-mongodb-mongos"
+# include_recipe "role-rabbitmq"
+# include_recipe "role-sphinx"
+# include_recipe "role-twemcache"
+#include_recipe "hostsfile"
+
+puts 'DOING THE GOOD STUFF HERE!!!!!!!!'
+
+# Create the hosts file at /etc/hosts
+hostsfile_entry node['cbplatform']['server']['ip_address'] do
+  hostname node['cbplatform']['server']['fqdn']
+  aliases node['cbplatform']['server']['aliases']
+  comment 'managed by Chef'
+end
+
+# # Hacky Enable PHP Extensions
+# ["mongo.ini", "memcached.ini", "pdo_dblib.ini"].each do |ext|
+#   cookbook_file ext do
+#     path "/usr/local/zend/etc/conf.d/" + ext
+#     action :create
+#     notifies :restart, 'service[zend-server]'
+#   end
+# end
+
+# Modify PHP Settings
+cookbook_file "caringbridge.ini" do
+  path "/usr/local/zend/etc/conf.d/caringbridge.ini"
+  action :create
+  notifies :restart, 'service[zend-server]'
+end
+
+# Create vhost if necessary
+cmd = [
+  '/usr/local/zend/bin/php /vagrant/scripts/cb vhost',
+  '/etc/httpd/conf.d/vhost-platform.conf',
+].join(' > ')
+execute cmd do
+  cwd node['cbplatform']['project_path']
+  env 'APPLICATION_ENV' => node['cbplatform']['environment']
+  user 'root'
+  group 'root'
+  not_if { ::File.exists?('/etc/httpd/conf.d/vhost-platform.conf') }
+  notifies :restart, 'service[zend-server]'
+end
+
+# Handle Self-signed SSL Certificates
+directory "/etc/httpd/conf/ssl" do
+  owner "root"
+  group "root"
+  mode 0755
+  action :create
+  notifies :restart, 'service[zend-server]'
+end
+cookbook_file "server.key" do
+  path "/etc/httpd/conf/ssl/server.key"
+  action :create
+  notifies :restart, 'service[zend-server]'
+end
+cookbook_file "server.crt" do
+  path "/etc/httpd/conf/ssl/server.crt"
+  action :create
+  notifies :restart, 'service[zend-server]'
+end
+cookbook_file 'ssl.conf' do
+  path "/etc/httpd/conf.d/ssl.conf"
+  action :create
+  notifies :restart, 'service[zend-server]'
+end
+
+# Manage vagrant.conf
+cookbook_file 'vagrant.conf' do
+  path "/etc/httpd/conf.d/vagrant.conf"
+  action :create
+  notifies :restart, 'service[zend-server]'
+end
+
+# # Install supervisor.d to manage RabbitMQ workers
+# cookbook_file 'supervisor.conf' do
+#   path '/etc/supervisor.conf'
+#   action :create
+# end
+# cookbook_file 'supervisor-init' do
+#   path '/etc/init.d/supervisor'
+#   mode 0755
+#   action :create
+# end
+# python_pip "supervisor" do
+#   action :install
+# end
+
+# # Stephen's udev hack
+# # Please tell me there's an easier way to do what we're about to do here.
+# # See: http://razius.com/articles/launching-services-after-vagrant-mount/
+# if node['cbplatform']['environment'] == 'vagrant'
+#   # The init.d runlevels won't start Zend Server at the correct time, so just
+#   # disable the service. We'll start it with a udev rule when the filesystems
+#   # finish mounting.
+#   service 'zend-server' do
+#     action :disable
+#   end
+#
+#   # I don't know if screen is necessary. It's used in the example at the URL
+#   # above and it certainly isn't hurting anything.
+#   yum_package 'screen' do
+#     action :install
+#   end
+#
+#   # This file contains the udev rule that starts Zend Server when VirtualBox's
+#   # shared folder filesystems finish mounting.
+#   cookbook_file 'vagrant-apache-udev-rules' do
+#     path '/etc/udev/rules.d/50-vagrant-mount.rules'
+#     action :create
+#     notifies :restart, 'service[zend-server]'
+#   end
+# end
+
+# Create dirs outside of source control
+["/public/assets/ugc", "/public/assets/ugc/pdf", "/logs"].each do |dir|
+  directory node['cbplatform']['project_path'] + dir do
+    owner "apache"
+    group "apache"
+    mode 0755
+    action :create
+    notifies :restart, 'service[zend-server]'
+  end
+end
+
+# # Turn on searchd
+# script "searchd_on" do
+#   interpreter "bash"
+#   user "root"
+#   cwd "/sbin"
+#   code <<-EOH
+#   chkconfig searchd on
+#   EOH
+# end
+
+# Symbolic Link zend php and php
+script "symlink_php" do
+  interpreter "bash"
+  user "root"
+  cwd "/sbin"
+  code <<-EOH
+  ln -s /usr/local/zend/bin/php /usr/bin/php
+  EOH
+end
+
+# # Symbolic Link zend php and php
+# script "sphinx_start" do
+#   interpreter "bash"
+#   user "root"
+#   cwd "/sbin"
+#   code <<-EOH
+#   sudo env APPLICATION_ENV=vagrant /opt/platform/scripts/cb search start
+#   EOH
+# end
+
+# Hacky Create Cron Jobs
+cookbook_file "cb_cron" do
+  user "root"
+  path "/var/spool/cron/root"
+  action :create
+end
