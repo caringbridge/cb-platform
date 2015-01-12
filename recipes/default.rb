@@ -23,7 +23,6 @@ include_recipe "python"
 # include_recipe "role-rabbitmq"
 # include_recipe "role-sphinx"
 # include_recipe "role-twemcache"
-# include_recipe "hostsfile"
 
 puts 'DOING THE GOOD STUFF HERE!!!!!!!!'
 
@@ -31,7 +30,6 @@ puts 'DOING THE GOOD STUFF HERE!!!!!!!!'
 hostsfile_entry node['cbplatform']['server']['ip_address'] do
   hostname node['cbplatform']['server']['fqdn']
   aliases node['cbplatform']['server']['aliases']
-  comment 'managed by Chef'
 end
 
 # # Hacky Enable PHP Extensions
