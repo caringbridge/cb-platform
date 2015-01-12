@@ -23,7 +23,7 @@ include_recipe "python"
 # include_recipe "role-rabbitmq"
 # include_recipe "role-sphinx"
 # include_recipe "role-twemcache"
-#include_recipe "hostsfile"
+# include_recipe "hostsfile"
 
 puts 'DOING THE GOOD STUFF HERE!!!!!!!!'
 
@@ -164,6 +164,7 @@ script "symlink_php" do
   code <<-EOH
   ln -s /usr/local/zend/bin/php /usr/bin/php
   EOH
+  not_if '/usr/bin/php'
 end
 
 # # Symbolic Link zend php and php

@@ -5,3 +5,5 @@ license          'All rights reserved'
 description      'Installs/Configures cb-platform'
 long_description 'Installs/Configures cb-platform'
 version          '0.1.0'
+
+depends 'hostfile'
