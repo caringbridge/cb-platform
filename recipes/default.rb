@@ -50,7 +50,7 @@ end
 
 # Create vhost if necessary
 cmd = [
-  '/usr/local/zend/bin/php /vagrant/scripts/cb vhost',
+  '/usr/local/zend/bin/php /opt/platform/scripts/cb vhost',
   '/etc/httpd/conf.d/vhost-platform.conf',
 ].join(' > ')
 execute cmd do
