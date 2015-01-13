@@ -7,6 +7,6 @@ default['cbplatform']['server']['aliases'] = ['caringbridge.dev',
             'annualreport.caringbridge.dev',
             'vagrant.cbtiny.org'
 ],
-default['cbplatform']['server']['ip_address'] = '192.168.90.130'
+default['cbplatform']['server']['ip_address'] = '33.33.33.41'
 default['cbplatform']['project_path'] = '/opt/platform' # FIXME: should be /var/www/platform
 default['cbplatform']['admin_email'] = ''
