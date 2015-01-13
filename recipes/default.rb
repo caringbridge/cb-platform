@@ -155,14 +155,18 @@ end
 # end
 
 # Symbolic Link zend php and php
-script "symlink_php" do
-  interpreter "bash"
-  user "root"
-  cwd "/sbin"
-  code <<-EOH
-  ln -s /usr/local/zend/bin/php /usr/bin/php
-  EOH
-  not_if '/usr/bin/php'
+# script "symlink_php" do
+#   interpreter "bash"
+#   user "root"
+#   cwd "/sbin"
+#   code <<-EOH
+#   ln -s /usr/local/zend/bin/php /usr/bin/php
+#   EOH
+#   not_if '/usr/bin/php'
+# end
+
+link "/usr/local/zend/bin/php" do
+  to "/usr/bin/php"
 end
 
 # # Symbolic Link zend php and php
