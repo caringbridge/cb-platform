@@ -48,6 +48,11 @@ cookbook_file "caringbridge.ini" do
   notifies :restart, 'service[zend-server]'
 end
 
+# Set the APPLICATION_ENV variable needed for scripts/cb
+env "APPLICATION_ENV" do
+  value "vagrant"
+end
+
 # Create vhost if necessary
 cmd = [
   '/usr/local/zend/bin/php /opt/platform/scripts/cb vhost',
@@ -72,17 +77,17 @@ directory "/etc/httpd/conf/ssl" do
   action :create
   notifies :restart, 'service[zend-server]'
 end
-file "../platform/chef/cookbooks/cbplatform/files/default/server.key" do
+file "/opt/platform/chef/cookbooks/cbplatform/files/default/server.key" do
   path "/etc/httpd/conf/ssl/server.key"
   action :create
   notifies :restart, 'service[zend-server]'
 end
-file "../platform/chef/cookbooks/cbplatform/files/default/server.crt" do
+file "/opt/platform/chef/cookbooks/cbplatform/files/default/server.crt" do
   path "/etc/httpd/conf/ssl/server.crt"
   action :create
   notifies :restart, 'service[zend-server]'
 end
-file '../platform/chef/cookbooks/cbplatform/files/default/ssl.conf' do
+file '/opt/platform/chef/cookbooks/cbplatform/files/default/ssl.conf' do
   path "/etc/httpd/conf.d/ssl.conf"
   action :create
   notifies :restart, 'service[zend-server]'
