@@ -1,4 +1,4 @@
-default['cbplatform']['server']['fqdn'] = 'centos6.caringbridge.dev'
+default['cbplatform']['server']['fqdn'] = 'mongos-zend.caringbridge.dev'
 default['cbplatform']['server']['aliases'] = ['caringbridge.dev',
             'www.caringbridge.dev',
             'admin.caringbridge.dev',
