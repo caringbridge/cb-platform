@@ -1,0 +1,20 @@
+SHELL=/bin/bash
+MAILTO=<%= default['cbplatform']['admin_email'] %>
+
+### Managed by Chef
+
+# SPHINX
+# EVERY 5 MINUTES - Update Sphinx Deltas (smaller index for search)
+*/5 * * * * env APPLICATION_ENV=vagrant-cluster /opt/platform/scripts/cb search heartbeat 1>/dev/null
+# 9:00PM - Update Sphinx Complete Index
+0  21 * * * env APPLICATION_ENV=vagrant-cluster /opt/platform/scripts/cb search reindex 1>/dev/null
+
+# EMAIL
+# 5:00PM visitor activity notification summaries (new guestbooks, comments, etc.)
+0 17 * * * env APPLICATION_ENV=vagrant-cluster /opt/platform/scripts/cb van summary
+# 7:00AM 2-day visitor/author emails
+0 7 * * * env APPLICATION_ENV=vagrant-cluster /var/www/platform/scripts/cb welcome email two day
+# 7:00AM 4-day visitor/author emails
+30 7 * * * env APPLICATION_ENV=vagrant-cluster /var/www/platform/scripts/cb welcome email four day
+# EVERY 15-MINUTES SupportPlanner Task Reminder Emails
+*/15 * * * * env APPLICATION_ENV=vagrant-cluster /var/www/platform/scripts/cb planner task reminder >/dev/null 2>&1
