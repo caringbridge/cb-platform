@@ -55,7 +55,7 @@ cmd = [
 ].join(' > ')
 execute cmd do
   cwd node['cbplatform']['project_path']
-  env 'APPLICATION_ENV' => node['cbplatform']['environment']
+  env 'APPLICATION_ENV' => 'vagrant'
   user 'root'
   group 'root'
   not_if { ::File.exists?('/etc/httpd/conf.d/vhost-platform.conf') }
