@@ -71,13 +71,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # An array of symbols representing groups of cookbook described in the Vagrantfile
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
-
+  admin_email = ENV['LOGNAME'] + '@caringbridge.org'
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       mysql: {
         server_root_password: 'rootpass',
         server_debian_password: 'debpass',
         server_repl_password: 'replpass'
+      },
+      admin: {
+        email: admin_email,
       }
     }
 

@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-MAILTO=<%= default['cbplatform']['admin_email'] %>
+# MAILTO= THIS SHOULD BE EACH USERS EMAIL ADDRESS
 
 ### Managed by Chef
 

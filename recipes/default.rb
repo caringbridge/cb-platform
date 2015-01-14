@@ -96,6 +96,13 @@ end
   end
 end
 
+# Hacky Create Cron Jobs
+cookbook_file "cb_cron" do  
+    user "root" 
+    path "/var/spool/cron/root"
+    action :create
+end
+
 # Symbolic Link zend php and php
 script "symlink_php" do
   interpreter "bash"
@@ -105,12 +112,4 @@ script "symlink_php" do
   ln -s /usr/local/zend/bin/php /usr/bin/php
   EOH
   not_if '/usr/bin/php'
-end
-
-# Hacky Create Cron Jobs
-template "/var/spool/cron/root" do
-  source "cb_cron.erb"
-  owner "root"
-  group "root"
-  action :create
 end
