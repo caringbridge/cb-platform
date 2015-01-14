@@ -70,20 +70,26 @@ directory "/etc/httpd/conf/ssl" do
   group "root"
   mode 0755
   action :create
-  notifies :restart, 'service[zend-server]'
 end
-file "/opt/platform/chef/cookbooks/cbplatform/files/default/server.key" do
-  path "/etc/httpd/conf/ssl/server.key"
+file "/etc/httpd/conf/ssl/server.key" do
+  content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/server.key").read
+  owner 'root'
+  group 'root'
+  mode 0755  
   action :create
-  notifies :restart, 'service[zend-server]'
 end
-file "/opt/platform/chef/cookbooks/cbplatform/files/default/server.crt" do
-  path "/etc/httpd/conf/ssl/server.crt"
+file "/etc/httpd/conf/ssl/server.crt" do
+  content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/server.crt").read
+  owner 'root'
+  group 'root'
+  mode 0755  
   action :create
-  notifies :restart, 'service[zend-server]'
 end
-file '/opt/platform/chef/cookbooks/cbplatform/files/default/ssl.conf' do
-  path "/etc/httpd/conf.d/ssl.conf"
+file '/etc/httpd/conf/ssl/ssl.conf' do
+  content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/ssl.conf").read
+  owner 'root'
+  group 'root'
+  mode 0777  
   action :create
   notifies :restart, 'service[zend-server]'
 end
