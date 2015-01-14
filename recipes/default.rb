@@ -63,6 +63,8 @@ execute cmd do
 end
 
 # Handle Self-signed SSL Certificates
+# @todo: Right we should be using non-sensative keys that
+# can be stored in the cb-platform repo
 directory "/etc/httpd/conf/ssl" do
   owner "root"
   group "root"
@@ -70,17 +72,17 @@ directory "/etc/httpd/conf/ssl" do
   action :create
   notifies :restart, 'service[zend-server]'
 end
-cookbook_file "server.key" do
+file "../platform/chef/cookbooks/cbplatform/files/default/server.key" do
   path "/etc/httpd/conf/ssl/server.key"
   action :create
   notifies :restart, 'service[zend-server]'
 end
-cookbook_file "server.crt" do
+file "../platform/chef/cookbooks/cbplatform/files/default/server.crt" do
   path "/etc/httpd/conf/ssl/server.crt"
   action :create
   notifies :restart, 'service[zend-server]'
 end
-cookbook_file 'ssl.conf' do
+file '../platform/chef/cookbooks/cbplatform/files/default/ssl.conf' do
   path "/etc/httpd/conf.d/ssl.conf"
   action :create
   notifies :restart, 'service[zend-server]'
