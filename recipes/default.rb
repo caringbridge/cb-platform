@@ -32,6 +32,8 @@ cookbook_file "caringbridge.ini" do
   notifies :restart, 'service[zend-server]'
 end
 
+ENV['APPLICATION_ENV'] = 'vagrant-cluster'
+
 # Create vhost if necessary
 cmd = [
   '/usr/local/zend/bin/php /opt/platform/scripts/cb vhost',
