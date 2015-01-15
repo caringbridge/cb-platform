@@ -61,21 +61,21 @@ file "/etc/httpd/conf/ssl/server.key" do
   content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/server.key").read
   owner 'root'
   group 'root'
-  mode 0755  
+  mode 0755
   action :create
 end
 file "/etc/httpd/conf/ssl/server.crt" do
   content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/server.crt").read
   owner 'root'
   group 'root'
-  mode 0755  
+  mode 0755
   action :create
 end
 file '/etc/httpd/conf.d/ssl.conf' do
   content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/ssl.conf").read
   owner 'root'
   group 'root'
-  mode 0777  
+  mode 0777
   action :create
   notifies :restart, 'service[zend-server]'
 end
@@ -99,19 +99,25 @@ end
 end
 
 # Hacky Create Cron Jobs
-cookbook_file "cb_cron" do  
-    user "root" 
+cookbook_file "cb_cron" do
+    user "root"
     path "/var/spool/cron/root"
     action :create
 end
 
 # Symbolic Link zend php and php
-script "symlink_php" do
-  interpreter "bash"
-  user "root"
-  cwd "/sbin"
-  code <<-EOH
-  ln -s /usr/local/zend/bin/php /usr/bin/php
-  EOH
-  not_if '/usr/bin/php'
+# script "symlink_php" do
+#   interpreter "bash"
+#   user "root"
+#   cwd "/sbin"
+#   code <<-EOH
+#   ln -s /usr/local/zend/bin/php /usr/bin/php
+#   EOH
+#   not_if '/usr/bin/php'
+# end
+
+link '/usr/bin/php' do
+  to '/usr/local/zend/bin/php'
+  link_type :symbolic
+  action :create
 end
