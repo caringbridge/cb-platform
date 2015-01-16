@@ -36,7 +36,7 @@ ENV['APPLICATION_ENV'] = 'vagrant-cluster'
 
 # Create vhost if necessary
 cmd = [
-  '/usr/local/zend/bin/php /opt/platform/scripts/cb vhost',
+  '/usr/local/zend/bin/php /var/www/platform/scripts/cb vhost',
   '/etc/httpd/conf.d/vhost-platform.conf',
 ].join(' > ')
 execute cmd do
@@ -58,21 +58,21 @@ directory "/etc/httpd/conf/ssl" do
   action :create
 end
 file "/etc/httpd/conf/ssl/server.key" do
-  content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/server.key").read
+  content ::File.open("/var/www/platform/chef/cookbooks/cbplatform/files/default/server.key").read
   owner 'root'
   group 'root'
   mode 0755
   action :create
 end
 file "/etc/httpd/conf/ssl/server.crt" do
-  content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/server.crt").read
+  content ::File.open("/var/www/platform/chef/cookbooks/cbplatform/files/default/server.crt").read
   owner 'root'
   group 'root'
   mode 0755
   action :create
 end
 file '/etc/httpd/conf.d/ssl.conf' do
-  content ::File.open("/opt/platform/chef/cookbooks/cbplatform/files/default/ssl.conf").read
+  content ::File.open("/var/www/platform/chef/cookbooks/cbplatform/files/default/ssl.conf").read
   owner 'root'
   group 'root'
   mode 0777
