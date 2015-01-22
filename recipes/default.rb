@@ -105,17 +105,20 @@ cookbook_file "cb_cron" do
     action :create
 end
 
-# Symbolic Link zend php and php
-# script "symlink_php" do
-#   interpreter "bash"
-#   user "root"
-#   cwd "/sbin"
-#   code <<-EOH
-#   ln -s /usr/local/zend/bin/php /usr/bin/php
-#   EOH
-#   not_if '/usr/bin/php'
-# end
+# Create admin users
+node['cbplatform']['admins'].each do |admin|
 
+  cmd = '/usr/local/zend/bin/php /var/www/platform/scripts/cb' + admin
+
+  execute cmd do
+    cwd node['cbplatform']['project_path']
+    env 'APPLICATION_ENV' => 'vagrant-cluster'
+    user 'root'
+    group 'root'
+  end
+end
+
+# System link zend php and php
 link '/usr/bin/php' do
   to '/usr/local/zend/bin/php'
   link_type :symbolic
