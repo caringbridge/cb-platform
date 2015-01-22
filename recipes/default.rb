@@ -108,7 +108,7 @@ end
 # Create admin users
 node['cbplatform']['admins'].each do |admin|
 
-  cmd = '/usr/local/zend/bin/php /var/www/platform/scripts/cb' + admin
+  cmd = '/usr/local/zend/bin/php /var/www/platform/scripts/cb create-staff-user '+ admin
 
   execute cmd do
     cwd node['cbplatform']['project_path']
