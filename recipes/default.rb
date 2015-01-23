@@ -37,7 +37,6 @@ execute cmd do
   env 'APPLICATION_ENV' => 'vagrant-cluster'
   user 'root'
   group 'root'
-  not_if { ::File.exists?('/etc/httpd/conf.d/vhost-platform.conf') }
   notifies :restart, 'service[zend-server]'
 end
 
