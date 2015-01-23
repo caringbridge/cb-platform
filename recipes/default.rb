@@ -7,14 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-#
-# Cookbook Name:: cb-platform
-# Recipe:: default
-#
-# Copyright (c) 2014, CaringBridge, a nonprofit organization
-#
-# All rights reserved - Do Not Redistribute
-
 include_recipe "yum"
 include_recipe "yum-epel"
 include_recipe "python"
@@ -32,6 +24,7 @@ cookbook_file "caringbridge.ini" do
   notifies :restart, 'service[zend-server]'
 end
 
+# Set the APPLICATION_ENV
 ENV['APPLICATION_ENV'] = 'vagrant-cluster'
 
 # Create vhost if necessary
@@ -49,7 +42,7 @@ execute cmd do
 end
 
 # Handle Self-signed SSL Certificates
-# @todo: Right we should be using non-sensative keys that
+# @todo: We should be using non-sensative keys that
 # can be stored in the cb-platform repo
 directory "/etc/httpd/conf/ssl" do
   owner "root"
@@ -100,9 +93,9 @@ end
 
 # Hacky Create Cron Jobs
 cookbook_file "cb_cron" do
-    user "root"
-    path "/var/spool/cron/root"
-    action :create
+  user "root"
+  path "/var/spool/cron/root"
+  action :create
 end
 
 # Create admin users
