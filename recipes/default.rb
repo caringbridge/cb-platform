@@ -7,14 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-#
-# Cookbook Name:: cb-platform
-# Recipe:: default
-#
-# Copyright (c) 2014, CaringBridge, a nonprofit organization
-#
-# All rights reserved - Do Not Redistribute
-
 include_recipe "yum"
 include_recipe "yum-epel"
 include_recipe "python"
@@ -32,6 +24,7 @@ cookbook_file "caringbridge.ini" do
   notifies :restart, 'service[zend-server]'
 end
 
+# Set the APPLICATION_ENV
 ENV['APPLICATION_ENV'] = 'vagrant-cluster'
 
 # Create vhost if necessary
@@ -44,12 +37,11 @@ execute cmd do
   env 'APPLICATION_ENV' => 'vagrant-cluster'
   user 'root'
   group 'root'
-  not_if { ::File.exists?('/etc/httpd/conf.d/vhost-platform.conf') }
   notifies :restart, 'service[zend-server]'
 end
 
 # Handle Self-signed SSL Certificates
-# @todo: Right we should be using non-sensative keys that
+# @todo: We should be using non-sensative keys that
 # can be stored in the cb-platform repo
 directory "/etc/httpd/conf/ssl" do
   owner "root"
@@ -100,22 +92,25 @@ end
 
 # Hacky Create Cron Jobs
 cookbook_file "cb_cron" do
-    user "root"
-    path "/var/spool/cron/root"
-    action :create
+  user "root"
+  path "/var/spool/cron/root"
+  action :create
 end
 
-# Symbolic Link zend php and php
-# script "symlink_php" do
-#   interpreter "bash"
-#   user "root"
-#   cwd "/sbin"
-#   code <<-EOH
-#   ln -s /usr/local/zend/bin/php /usr/bin/php
-#   EOH
-#   not_if '/usr/bin/php'
-# end
+# Create admin users
+node['cbplatform']['admins'].each do |admin|
 
+  cmd = '/usr/local/zend/bin/php /var/www/platform/scripts/cb create-staff-user ' + admin
+
+  execute cmd do
+    cwd node['cbplatform']['project_path']
+    env 'APPLICATION_ENV' => 'vagrant-cluster'
+    user 'root'
+    group 'root'
+  end
+end
+
+# System link zend php and php
 link '/usr/bin/php' do
   to '/usr/local/zend/bin/php'
   link_type :symbolic
